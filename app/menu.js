@@ -24,7 +24,7 @@ module.exports = ({createWindow, updatePlugins}) => {
       },
       {
         label: 'Preferences...',
-        accelerator: accelerators.preferences,
+        command: 'show-settings',
         click(item, focusedWindow) {
           if (focusedWindow) {
             focusedWindow.rpc.emit('preferences');
@@ -66,14 +66,14 @@ module.exports = ({createWindow, updatePlugins}) => {
     submenu: [
       {
         label: 'New Window',
-        accelerator: accelerators.newWindow,
+        command: 'new-window',
         click() {
           createWindow();
         }
       },
       {
         label: 'New Tab',
-        accelerator: accelerators.newTab,
+        command: 'new-tab',
         click(item, focusedWindow) {
           if (focusedWindow) {
             focusedWindow.rpc.emit('termgroup add req');
@@ -87,7 +87,7 @@ module.exports = ({createWindow, updatePlugins}) => {
       },
       {
         label: 'Split Vertically',
-        accelerator: accelerators.splitVertically,
+        command: 'split-vertical',
         click(item, focusedWindow) {
           if (focusedWindow) {
             focusedWindow.rpc.emit('split request vertical');
@@ -96,7 +96,7 @@ module.exports = ({createWindow, updatePlugins}) => {
       },
       {
         label: 'Split Horizontally',
-        accelerator: accelerators.splitHorizontally,
+        command: 'split-horizontal',
         click(item, focusedWindow) {
           if (focusedWindow) {
             focusedWindow.rpc.emit('split request horizontal');
@@ -108,7 +108,7 @@ module.exports = ({createWindow, updatePlugins}) => {
       },
       {
         label: 'Close Session',
-        accelerator: accelerators.closeSession,
+        command: 'close',
         click(item, focusedWindow) {
           if (focusedWindow) {
             focusedWindow.rpc.emit('termgroup close req');
@@ -118,7 +118,7 @@ module.exports = ({createWindow, updatePlugins}) => {
       {
         label: isMac ? 'Close Window' : 'Quit',
         role: 'close',
-        accelerator: accelerators.closeWindow
+        command: 'close-window',
       }
     ]
   };
@@ -158,13 +158,51 @@ module.exports = ({createWindow, updatePlugins}) => {
       },
       {
         label: 'Clear',
-        accelerator: accelerators.clear,
+        command: 'clear',
         click(item, focusedWindow) {
           if (focusedWindow) {
             focusedWindow.rpc.emit('session clear req');
           }
         }
       }
+      /**
+      ,{
+        type: 'separator'
+      },
+       * @TODO: implemented in rpc, ./lib/index.js
+      ...[{
+        label: 'Move word Left',
+        command: 'move-word-left',
+      }, {
+        label: 'Move word Right',
+        command: 'move-word-right',
+      }, {
+        label: 'Delete word Left',
+        command: 'delete-word-left',
+      }, {
+        label: 'Delete word Right',
+        command: 'delete-word-right',
+      }, {
+        label: 'Delete line',
+        command: 'delete-line',
+      }, {
+        label: 'Move to line start',
+        command: 'move-to-line-start',
+      }, {
+        label: 'Move to line end',
+        command: 'move-to-line-end',
+      }, {
+        label: 'Select All',
+        command: 'select-all',
+      }].map(submenuItem => {
+        item.click = function click(item, focusedWindow) {
+          if (focusedWindow) {
+            focusedWindow.rpc.emit(submenuItem.command);
+          }
+        };
+        return item;
+      }),
+      */
     ]
   };
 
@@ -173,7 +211,7 @@ module.exports = ({createWindow, updatePlugins}) => {
       {type: 'separator'},
       {
         label: 'Preferences...',
-        accelerator: accelerators.preferences,
+        command: 'show-settings',
         click(item, focusedWindow) {
           if (focusedWindow) {
             focusedWindow.rpc.emit('preferences');
@@ -190,7 +228,7 @@ module.exports = ({createWindow, updatePlugins}) => {
     submenu: [
       {
         label: 'Reload',
-        accelerator: accelerators.reload,
+        command: 'reload',
         click(item, focusedWindow) {
           if (focusedWindow) {
             focusedWindow.rpc.emit('reload');
@@ -199,7 +237,7 @@ module.exports = ({createWindow, updatePlugins}) => {
       },
       {
         label: 'Full Reload',
-        accelerator: accelerators.fullReload,
+        command: 'reload-full',
         click(item, focusedWindow) {
           if (focusedWindow) {
             focusedWindow.reload();
@@ -208,7 +246,7 @@ module.exports = ({createWindow, updatePlugins}) => {
       },
       {
         label: 'Toggle Developer Tools',
-        accelerator: accelerators.toggleDevTools,
+        command: 'toggle-devtools',
         click(item, focusedWindow) {
           if (focusedWindow) {
             focusedWindow.webContents.toggleDevTools();
@@ -220,7 +258,7 @@ module.exports = ({createWindow, updatePlugins}) => {
       },
       {
         label: 'Reset Zoom Level',
-        accelerator: accelerators.resetZoom,
+        command: 'zoom-reset',
         click(item, focusedWindow) {
           if (focusedWindow) {
             focusedWindow.rpc.emit('reset fontSize req');
@@ -229,7 +267,7 @@ module.exports = ({createWindow, updatePlugins}) => {
       },
       {
         label: 'Zoom In',
-        accelerator: accelerators.zoomIn,
+        command: 'zoom-in',
         click(item, focusedWindow) {
           if (focusedWindow) {
             focusedWindow.rpc.emit('increase fontSize req');
@@ -238,13 +276,28 @@ module.exports = ({createWindow, updatePlugins}) => {
       },
       {
         label: 'Zoom Out',
-        accelerator: accelerators.zoomOut,
+        command: 'zoom-out',
         click(item, focusedWindow) {
           if (focusedWindow) {
             focusedWindow.rpc.emit('decrease fontSize req');
           }
         }
       }
+      /**
+      * @TODO: implemented in rpc, ./lib/index.js
+      ,{
+        type: 'separator'
+      },
+      ...[ 1, 2, 3, 4, 5, 6, 7, 8, 'last' ].map((value, index) => ({
+        label: `Show ${value} Tab`,
+        command: `tab-show-${ value === 'last' ? value : index }`,
+        click(item, focusedWindow) {
+          if (focusedWindow) {
+            focusedWindow.rpc.emit(`move req ${ value === 'last' ? value : index }`);
+          }
+        }
+      })),
+      */
     ]
   };
 
@@ -253,7 +306,7 @@ module.exports = ({createWindow, updatePlugins}) => {
     submenu: [
       {
         label: 'Update All Now',
-        accelerator: accelerators.updatePlugins,
+        command: 'update-plugins',
         click() {
           updatePlugins();
         }
@@ -276,7 +329,7 @@ module.exports = ({createWindow, updatePlugins}) => {
       },
       {
         label: 'Show Previous Tab',
-        accelerator: accelerators.showPreviousTab,
+        command: 'prev-tab',
         click(item, focusedWindow) {
           if (focusedWindow) {
             focusedWindow.rpc.emit('move left req');
@@ -285,7 +338,7 @@ module.exports = ({createWindow, updatePlugins}) => {
       },
       {
         label: 'Show Next Tab',
-        accelerator: accelerators.showNextTab,
+        command: 'next-tab',
         click(item, focusedWindow) {
           if (focusedWindow) {
             focusedWindow.rpc.emit('move right req');
@@ -297,19 +350,19 @@ module.exports = ({createWindow, updatePlugins}) => {
       },
       {
         label: 'Select Next Pane',
-        accelerator: accelerators.selectNextPane,
+        command: 'prev-pane',
         click(item, focusedWindow) {
           if (focusedWindow) {
-            focusedWindow.rpc.emit('next pane req');
+            focusedWindow.rpc.emit('prev pane req');
           }
         }
       },
       {
         label: 'Select Previous Pane',
-        accelerator: accelerators.selectPreviousPane,
+        command: 'next-pane',
         click(item, focusedWindow) {
           if (focusedWindow) {
-            focusedWindow.rpc.emit('prev pane req');
+            focusedWindow.rpc.emit('next pane req');
           }
         }
       },
